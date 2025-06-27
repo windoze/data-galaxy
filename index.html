@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易数星图 - 数据智能与企业AI解决方案</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #0a192f;
+            --primary-medium: #112240;
+            --primary-light: #172a45;
+            --accent: #64ffda;
+            --accent-light: #88ffdf;
+            --text-light: #ccd6f6;
+            --text-lighter: #e6f1ff;
+            --text-gray: #8892b0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-medium) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* 导航栏样式 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 25, 47, 0.85);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-lighter);
+        }
+        
+        .logo-icon {
+            margin-right: 12px;
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 2.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+        
+        .cta-button {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 0.8rem 1.8rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            background: rgba(100, 255, 218, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 255, 218, 0.2);
+        }
+        
+        /* 主视觉区域 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 10%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(100, 255, 218, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(86, 207, 225, 0.1) 0%, transparent 40%);
+            z-index: -1;
+        }
+        
+        .hero-content {
+            max-width: 650px;
+            z-index: 2;
+        }
+        
+        .hero-subtitle {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--text-lighter);
+            font-weight: 700;
+        }
+        
+        .hero-description {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .primary-button {
+            background: var(--accent);
+            color: var(--primary-dark);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .primary-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(100, 255, 218, 0.4);
+        }
+        
+        .hero-image {
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, var(--primary-light), #1a3a6a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .data-visualization {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            padding: 2rem;
+        }
+        
+        .graph {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        
+        .graph-1 {
+            width: 80%;
+            height: 40px;
+            top: 20%;
+            left: 10%;
+            animation: pulse 3s infinite alternate;
+        }
+        
+        .graph-2 {
+            width: 60%;
+            height: 40px;
+            top: 35%;
+            right: 10%;
+            animation: pulse 3s infinite alternate-reverse;
+        }
+        
+        .graph-3 {
+            width: 70%;
+            height: 40px;
+            bottom: 30%;
+            left: 15%;
+            animation: pulse 3.5s infinite alternate;
+        }
+        
+        .graph-4 {
+            width: 50%;
+            height: 40px;
+            bottom: 15%;
+            right: 20%;
+            animation: pulse 3.5s infinite alternate-reverse;
+        }
+        
+        .nodes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 15px rgba(100, 255, 218, 0.7);
+        }
+        
+        .node:nth-child(1) { top: 25%; left: 20%; }
+        .node:nth-child(2) { top: 40%; left: 50%; }
+        .node:nth-child(3) { top: 60%; left: 30%; }
+        .node:nth-child(4) { top: 35%; left: 75%; }
+        .node:nth-child(5) { top: 65%; left: 65%; }
+        
+        /* 服务区域 */
+        .services {
+            padding: 8rem 10%;
+            background: var(--primary-medium);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        
+        .section-subtitle {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--text-lighter);
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-description {
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .service-card {
+            background: rgba(23, 42, 69, 0.5);
+            border-radius: 8px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(100, 255, 218, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-lighter);
+        }
+        
+        .service-description {
+            color: var(--text-gray);
+            margin-bottom: 1.5rem;
+        }
+        
+        .learn-more {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .learn-more i {
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .learn-more:hover i {
+            transform: translateX(5px);
+        }
+        
+        /* 客户案例 */
+        .clients {
+            padding: 8rem 10%;
+            background: var(--primary-dark);
+        }
+        
+        .client-logos {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+        
+        .client-logo {
+            color: var(--text-gray);
+            font-size: 2rem;
+            font-weight: 700;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .client-logo:hover {
+            color: var(--accent-light);
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        /* 联系我们 */
+        .contact {
+            padding: 8rem 10%;
+            background: linear-gradient(to bottom, var(--primary-medium) 0%, var(--primary-dark) 100%);
+            text-align: center;
+        }
+        
+        .contact-form {
+            max-width: 600px;
+            margin: 3rem auto 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(23, 42, 69, 0.5);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            border-radius: 4px;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        /* 页脚 */
+        .footer {
+            padding: 4rem 10% 2rem;
+            background: var(--primary-dark);
+            border-top: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-lighter);
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        
+        .footer-description {
+            color: var(--text-gray);
+            margin-bottom: 1.5rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(23, 42, 69, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: var(--accent);
+            color: var(--primary-dark);
+            transform: translateY(-5px);
+        }
+        
+        .footer-heading {
+            font-size: 1.2rem;
+            color: var(--text-lighter);
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(136, 146, 176, 0.1);
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* 动画 */
+        @keyframes pulse {
+            0% { background: rgba(100, 255, 218, 0.1); }
+            100% { background: rgba(100, 255, 218, 0.3); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 7rem;
+            }
+            
+            .hero-content {
+                margin-bottom: 3rem;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-image {
+                position: relative;
+                width: 90%;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin: 0 auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-stars logo-icon"></i>
+            <span>易数星图</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">首页</a></li>
+            <li><a href="#services">产品服务</a></li>
+            <li><a href="#solutions">解决方案</a></li>
+            <li><a href="#clients">客户案例</a></li>
+            <li><a href="#about">关于我们</a></li>
+            <li><a href="#contact">联系我们</a></li>
+        </ul>
+        <button class="cta-button">演示预约</button>
+    </nav>
+
+    <!-- 主视觉区域 -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h3 class="hero-subtitle">数据驱动未来 · AI赋能企业</h3>
+            <h1 class="hero-title">智能数据解决方案<br>助力企业数字化转型</h1>
+            <p class="hero-description">
+                易数星图专注于企业级数据智能与AI应用，提供从数据治理、分析挖掘到AI赋能的完整解决方案，帮助企业释放数据价值，驱动业务创新与增长。
+            </p>
+            <div class="hero-buttons">
+                <button class="primary-button">探索解决方案</button>
+                <button class="cta-button">预约咨询</button>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="data-visualization">
+                <div class="graph graph-1"></div>
+                <div class="graph graph-2"></div>
+                <div class="graph graph-3"></div>
+                <div class="graph graph-4"></div>
+                <div class="nodes">
+                    <div class="node"></div>
+                    <div class="node"></div>
+                    <div class="node"></div>
+                    <div class="node"></div>
+                    <div class="node"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务区域 -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <h3 class="section-subtitle">核心服务</h3>
+            <h2 class="section-title">提供全面的数据智能解决方案</h2>
+            <p class="section-description">
+                我们通过创新的技术与行业洞察，为企业提供从数据到智能的全栈式解决方案
+            </p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3 class="service-title">数据治理平台</h3>
+                <p class="service-description">
+                    构建企业级数据资产管理体系，实现数据标准化、质量监控与全生命周期管理。
+                </p>
+                <a href="#" class="learn-more">
+                    了解更多 <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 class="service-title">AI智能决策</h3>
+                <p class="service-description">
+                    基于机器学习与深度学习技术，构建预测模型与决策引擎，赋能企业智能决策。
+                </p>
+                <a href="#" class="learn-more">
+                    了解更多 <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="service-title">商业智能分析</h3>
+                <p class="service-description">
+                    通过可视化分析平台，深入挖掘业务数据价值，提供实时洞察与决策支持。
+                </p>
+                <a href="#" class="learn-more">
+                    了解更多 <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <h3 class="service-title">云数据平台</h3>
+                <p class="service-description">
+                    基于云原生的数据湖仓一体架构，提供弹性、安全、高效的数据基础设施。
+                </p>
+                <a href="#" class="learn-more">
+                    了解更多 <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3 class="service-title">智能自动化</h3>
+                <p class="service-description">
+                    RPA与AI结合，实现业务流程自动化，提升运营效率与准确性。
+                </p>
+                <a href="#" class="learn-more">
+                    了解更多 <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="service-title">数据安全与合规</h3>
+                <p class="service-description">
+                    提供全方位的数据安全防护与合规管理，保障企业数据资产安全。
+                </p>
+                <a href="#" class="learn-more">
+                    了解更多 <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客户案例 -->
+    <section class="clients" id="clients">
+        <div class="section-header">
+            <h3 class="section-subtitle">客户信任</h3>
+            <h2 class="section-title">服务行业领先企业</h2>
+            <p class="section-description">
+                我们已帮助多个行业的领先企业实现数据驱动转型
+            </p>
+        </div>
+        <div class="client-logos">
+            <div class="client-logo">金融科技</div>
+            <div class="client-logo">智能制造</div>
+            <div class="client-logo">零售电商</div>
+            <div class="client-logo">医疗健康</div>
+            <div class="client-logo">智慧物流</div>
+        </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section class="contact" id="contact">
+        <div class="section-header">
+            <h3 class="section-subtitle">开启智能之旅</h3>
+            <h2 class="section-title">联系我们</h2>
+            <p class="section-description">
+                我们的专家团队将为您提供专业咨询与定制化解决方案
+            </p>
+        </div>
+        <div class="contact-form">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="您的姓名">
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" placeholder="电子邮箱">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="公司名称">
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" placeholder="您的需求"></textarea>
+            </div>
+            <button class="primary-button">提交咨询</button>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-about">
+                <a href="#" class="footer-logo">
+                    <i class="fas fa-stars"></i> 易数星图
+                </a>
+                <p class="footer-description">
+                    专注于企业级数据智能与AI应用，帮助企业释放数据价值，驱动业务创新与增长。
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-weixin"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="footer-links-group">
+                <h4 class="footer-heading">产品服务</h4>
+                <ul class="footer-links">
+                    <li><a href="#">数据治理平台</a></li>
+                    <li><a href="#">AI智能决策</a></li>
+                    <li><a href="#">商业智能分析</a></li>
+                    <li><a href="#">云数据平台</a></li>
+                    <li><a href="#">智能自动化</a></li>
+                </ul>
+            </div>
+            <div class="footer-links-group">
+                <h4 class="footer-heading">解决方案</h4>
+                <ul class="footer-links">
+                    <li><a href="#">金融科技</a></li>
+                    <li><a href="#">智能制造</a></li>
+                    <li><a href="#">零售电商</a></li>
+                    <li><a href="#">医疗健康</a></li>
+                    <li><a href="#">智慧物流</a></li>
+                </ul>
+            </div>
+            <div class="footer-links-group">
+                <h4 class="footer-heading">联系我们</h4>
+                <ul class="footer-links">
+                    <li><i class="fas fa-map-marker-alt"></i> 西安市高新区</li>
+                    <li><i class="fas fa-phone"></i> 400-888-9999</li>
+                    <li><i class="fas fa-envelope"></i> contact@data-galaxy.com</li>
+                    <li><i class="fas fa-clock"></i> 周一至周五 9:00-18:00</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 易数星图科技有限公司. 保留所有权利. 陕ICP备12345678号</p>
+        </div>
+    </footer>
+
+    <script>
+        // 简单的滚动效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 导航栏滚动效果
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.style.padding = '1rem 5%';
+                    navbar.style.background = 'rgba(10, 25, 47, 0.95)';
+                } else {
+                    navbar.style.padding = '1.5rem 5%';
+                    navbar.style.background = 'rgba(10, 25, 47, 0.85)';
+                }
+            });
+            
+            // 服务卡片动画
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        window.scrollTo({
+                            top: target.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
